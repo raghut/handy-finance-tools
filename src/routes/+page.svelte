@@ -1,0 +1,47 @@
+<script>
+  import CalculatorCard from '$lib/components/CalculatorCard.svelte';
+
+  const calculators = [
+    {
+      title: 'EMI Calculator',
+      description: 'Calculate your monthly EMI payments for loans with our easy-to-use calculator.',
+      icon: 'calculator',
+      route: '/emi-calculator'
+    },
+    {
+      title: 'Interest Calculator',
+      description: 'Calculate simple and compound interest for your investments and loans.',
+      icon: 'percentage',
+      route: '/interest-calculator'
+    }
+  ];
+</script>
+
+<div class="container">
+  <h1>Financial Calculator Hub</h1>
+  <div class="calculator-grid">
+    {#each calculators as calculator}
+      <CalculatorCard {...calculator} />
+    {/each}
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #1a73e8;
+    margin-bottom: 30px;
+  }
+
+  .calculator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+</style>
