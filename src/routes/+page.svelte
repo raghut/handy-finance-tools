@@ -9,10 +9,22 @@
       route: '/emi-calculator'
     },
     {
-      title: 'Interest Calculator',
-      description: 'Calculate simple and compound interest for your investments and loans.',
+      title: 'Interest Amount Calculator',
+      description: 'Calculate simple interest and CAGR for your investments.',
       icon: 'percentage',
       route: '/interest-calculator'
+    },
+    {
+      title: 'Chit Calculator',
+      description: 'Calculate rate of interest for auction amount',
+      icon: 'percentage',
+      route: '/chit-advanced'
+    },
+    {
+      title: 'Interest Rate Calculator',
+      description: 'Calculate rate of interest',
+      icon: 'percentage',
+      route: '/interest-rate-calculator'
     }
   ];
 </script>
