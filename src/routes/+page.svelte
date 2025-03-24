@@ -11,7 +11,7 @@
     {
       title: 'Interest Amount Calculator',
       description: 'Calculate simple interest and CAGR for your investments.',
-      icon: 'percentage',
+      icon: 'calculator',
       route: '/interest-calculator'
     },
     {
