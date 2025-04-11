@@ -1,13 +1,13 @@
-<script>
+<script lang="ts">
   let principal = 0;
   let rate = 0;
   let time = 0;
   let emi = 0;
 
   function calculateEMI() {
-    const p = parseFloat(principal);
-    const r = parseFloat(rate) / (12 * 100); // monthly interest rate
-    const n = parseFloat(time) * 12; // number of months
+    const p = parseFloat(principal.toString());
+    const r = parseFloat(rate.toString()) / (12 * 100); // monthly interest rate
+    const n = parseFloat(time.toString()) * 12; // number of months
     
     if (p && r && n) {
       emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
@@ -15,29 +15,29 @@
   }
 </script>
 
-<div class="calculator-container">
-  <h1>EMI Calculator</h1>
-  <div class="calculator-form">
-    <div class="input-group">
-      <label for="principal">Loan Amount (₹)</label>
-      <input type="number" id="principal" bind:value={principal} min="0">
+<div class="calculator-container" data-testid="emi-calculator-container">
+  <h1 data-testid="emi-calculator-title">EMI Calculator</h1>
+  <div class="calculator-form" data-testid="emi-calculator-form">
+    <div class="input-group" data-testid="loan-amount-group">
+      <label for="principal" data-testid="loan-amount-label">Loan Amount (₹)</label>
+      <input type="number" id="principal" bind:value={principal} min="0" data-testid="loan-amount-input">
     </div>
     
-    <div class="input-group">
-      <label for="rate">Interest Rate (% per annum)</label>
-      <input type="number" id="rate" bind:value={rate} min="0" step="0.1">
+    <div class="input-group" data-testid="interest-rate-group">
+      <label for="rate" data-testid="interest-rate-label">Interest Rate (% per annum)</label>
+      <input type="number" id="rate" bind:value={rate} min="0" step="0.1" data-testid="interest-rate-input">
     </div>
     
-    <div class="input-group">
-      <label for="time">Loan Term (Years)</label>
-      <input type="number" id="time" bind:value={time} min="0">
+    <div class="input-group" data-testid="loan-term-group">
+      <label for="time" data-testid="loan-term-label">Loan Term (Years)</label>
+      <input type="number" id="time" bind:value={time} min="0" data-testid="loan-term-input">
     </div>
 
-    <button on:click={calculateEMI}>Calculate EMI</button>
+    <button on:click={calculateEMI} data-testid="calculate-emi-button">Calculate EMI</button>
 
     {#if emi}
-      <div class="result">
-        <h2>Monthly EMI: ₹{emi.toFixed(2)}</h2>
+      <div class="result" data-testid="emi-result">
+        <h2 data-testid="monthly-emi-value">Monthly EMI: ₹{emi.toFixed(2)}</h2>
       </div>
     {/if}
   </div>

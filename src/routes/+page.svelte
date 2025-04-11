@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
   import CalculatorCard from '$lib/components/CalculatorCard.svelte';
 
-  const calculators = [
+  const calculators: {
+    title: string;
+    description: string;
+    icon: "calculator" | "percentage";
+    route: string;
+  }[] = [
     {
       title: 'EMI Calculator',
       description: 'Calculate your monthly EMI payments for loans with our easy-to-use calculator.',
@@ -29,11 +34,14 @@
   ];
 </script>
 
-<div class="container">
-  <h1>Financial Calculator Hub</h1>
-  <div class="calculator-grid">
-    {#each calculators as calculator}
-      <CalculatorCard {...calculator} />
+<div class="container" data-testid="calculator-hub-container">
+  <h1 data-testid="calculator-hub-title">Financial Calculator Hub</h1>
+  <div class="calculator-grid" data-testid="calculator-grid">
+    {#each calculators as calculator, index}
+      <CalculatorCard 
+        {...calculator} 
+        data_testid={`calculator-card-${index}`}
+      />
     {/each}
   </div>
 </div>

@@ -19,47 +19,51 @@
     });
 </script>
 
-<div class="calculator-container">
-    <h1>Advanced Chit Fund Calculator</h1>
+<div class="calculator-container" data-testid="chit-calculator-container">
+    <h1 data-testid="calculator-title">Advanced Chit Fund Calculator</h1>
     
-    <div class="calculator-form">
-        <h2>Input Details</h2>
+    <div class="calculator-form" data-testid="calculator-form">
+        <h2 data-testid="input-section-title">Input Details</h2>
         
-        <div class="input-group">
-            <label for="chitAmount">Chit Amount (₹)</label>
+        <div class="input-group" data-testid="chit-amount-group">
+            <label for="chitAmount" data-testid="chit-amount-label">Chit Amount (₹)</label>
             <input 
                 type="number" 
                 id="chitAmount"
+                data-testid="chit-amount-input"
                 bind:value={chitAmount}
                 min="0"
             >
         </div>
 
-        <div class="input-group">
-            <label for="numberOfPeople">Number of People</label>
+        <div class="input-group" data-testid="number-of-people-group">
+            <label for="numberOfPeople" data-testid="number-of-people-label">Number of People</label>
             <input 
                 type="number" 
                 id="numberOfPeople"
+                data-testid="number-of-people-input"
                 bind:value={numberOfPeople}
                 min="1"
             >
         </div>
 
-        <div class="input-group">
-            <label for="numberOfMonths">Number of Months</label>
+        <div class="input-group" data-testid="number-of-months-group">
+            <label for="numberOfMonths" data-testid="number-of-months-label">Number of Months</label>
             <input 
                 type="number" 
                 id="numberOfMonths"
+                data-testid="number-of-months-input"
                 bind:value={numberOfMonths}
                 min="1"
             >
         </div>
 
-        <div class="input-group">
-            <label for="commissionPercentage">Commission (%)</label>
+        <div class="input-group" data-testid="commission-percentage-group">
+            <label for="commissionPercentage" data-testid="commission-percentage-label">Commission (%)</label>
             <input 
                 type="number" 
                 id="commissionPercentage"
+                data-testid="commission-percentage-input"
                 bind:value={commissionPercentage}
                 min="0"
                 max="100"
@@ -67,64 +71,66 @@
             >
         </div>
 
-        <div class="input-group">
-            <label for="auctionMonth">Auction Month</label>
+        <div class="input-group" data-testid="auction-month-group">
+            <label for="auctionMonth" data-testid="auction-month-label">Auction Month</label>
             <input 
                 type="number" 
                 id="auctionMonth"
+                data-testid="auction-month-input"
                 bind:value={auctionMonth}
                 min="1"
                 max={numberOfMonths}
             >
         </div>
 
-        <div class="input-group">
-            <label for="auctionAmount">Auction Amount (₹)</label>
+        <div class="input-group" data-testid="auction-amount-group">
+            <label for="auctionAmount" data-testid="auction-amount-label">Auction Amount (₹)</label>
             <input 
                 type="number" 
                 id="auctionAmount"
+                data-testid="auction-amount-input"
                 bind:value={auctionAmount}
                 max={chitAmount}
             >
         </div>
 
-        <div class="result">
-            <h2>Calculation Results</h2>
+        <div class="result" data-testid="results-section">
+            <h2 data-testid="results-section-title">Calculation Results</h2>
             
 
-            <div class="interest-details">
-                <div class="interest-group">
-                    <h3>Effective Annual Interest Rate</h3>
-                    <p>{results.interestRate}%</p>
+            <div class="interest-details" data-testid="interest-details-section">
+                <div class="interest-group" data-testid="effective-annual-interest-group">
+                    <h3 data-testid="effective-annual-interest-label">Effective Annual Interest Rate</h3>
+                    <p data-testid="effective-annual-interest-value">{results.interestRate}%</p>
                 </div>
-                <div class="interest-group">
-                    <h3>Interest Rate in Rupees</h3>
-                    <p>₹{results.interestRateInRupees}</p>
+                <div class="interest-group" data-testid="interest-rate-rupees-group">
+                    <h3 data-testid="interest-rate-rupees-label">Interest Rate in Rupees</h3>
+                    <p data-testid="interest-rate-rupees-value">₹{results.interestRateInRupees}</p>
                 </div>
-                <div class="interest-group">
-                    <h3>Remaining Months</h3>
-                    <p>{results.remainingMonths}</p>
+                <div class="interest-group" data-testid="remaining-months-group">
+                    <h3 data-testid="remaining-months-label">Remaining Months</h3>
+                    <p data-testid="remaining-months-value">{results.remainingMonths}</p>
                 </div>
             </div>
 
-            <div class="result-group">
-                <h3>Monthly Contribution</h3>
-                <p>₹{results.monthlyContribution}</p>
+            <div class="result-group" data-testid="monthly-contribution-group">
+                <h3 data-testid="monthly-contribution-label">Monthly Contribution</h3>
+                <p data-testid="monthly-contribution-value">₹{results.monthlyContribution}</p>
             </div>
 
-            <div class="result-group">
-                <h3>Commission Amount</h3>
-                <p>₹{results.commission}</p>
+            <div class="result-group" data-testid="commission-amount-group">
+                <h3 data-testid="commission-amount-label">Commission Amount</h3>
+                <p data-testid="commission-amount-value">₹{results.commission}</p>
             </div>
 
-            <div class="result-group">
-                <h3>Dividend Per Person</h3>
-                <p>₹{results.dividendPerPerson}</p>
+            <div class="result-group" data-testid="dividend-per-person-group">
+                <h3 data-testid="dividend-per-person-label">Dividend Per Person</h3>
+                <p data-testid="dividend-per-person-value">₹{results.dividendPerPerson}</p>
             </div>
 
-            <div class="result-group">
-                <h3>Net Payable Per Person</h3>
-                <p>₹{results.netPayablePerPerson}</p>
+            <div class="result-group" data-testid="net-payable-group">
+                <h3 data-testid="net-payable-label">Net Payable Per Person</h3>
+                <p data-testid="net-payable-value">₹{results.netPayablePerPerson}</p>
             </div>
 
         </div>

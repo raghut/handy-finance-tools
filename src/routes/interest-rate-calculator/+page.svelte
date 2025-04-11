@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     let principalAmount = '';
     let interestAmount = '';
     let durationMonths = '';
@@ -36,18 +36,18 @@
     }
 
     // Input validation
-    function validateNumber(event) {
-        const value = event.target.value;
-        if (value < 0) event.target.value = 0;
+    function validateNumber(event: Event) {
+        const value = (event.target as HTMLInputElement).value;
+        if (parseFloat(value) < 0) (event.target as HTMLInputElement).value = '0';
     }
 </script>
 
-<div class="calculator-container">
-    <h1>Interest Rate Calculator</h1>
+<div class="calculator-container" data-testid="interest-rate-calculator-container">
+    <h1 data-testid="interest-rate-calculator-title">Interest Rate Calculator</h1>
     
-    <div class="calculator-form">
-        <div class="input-group">
-            <label for="principal">Principal Amount (₹)</label>
+    <div class="calculator-form" data-testid="interest-rate-calculator-form">
+        <div class="input-group" data-testid="principal-amount-group">
+            <label for="principal" data-testid="principal-amount-label">Principal Amount (₹)</label>
             <input 
                 type="number" 
                 id="principal" 
@@ -55,11 +55,12 @@
                 placeholder="Enter principal amount"
                 min="0"
                 on:input={validateNumber}
+                data-testid="principal-amount-input"
             />
         </div>
 
-        <div class="input-group">
-            <label for="interest">Interest Amount (₹)</label>
+        <div class="input-group" data-testid="interest-amount-group">
+            <label for="interest" data-testid="interest-amount-label">Interest Amount (₹)</label>
             <input 
                 type="number" 
                 id="interest" 
@@ -67,11 +68,12 @@
                 placeholder="Enter interest amount"
                 min="0"
                 on:input={validateNumber}
+                data-testid="interest-amount-input"
             />
         </div>
 
-        <div class="input-group">
-            <label for="duration">Duration (Months)</label>
+        <div class="input-group" data-testid="duration-months-group">
+            <label for="duration" data-testid="duration-months-label">Duration (Months)</label>
             <input 
                 type="number" 
                 id="duration" 
@@ -79,36 +81,38 @@
                 placeholder="Enter duration in months"
                 min="0"
                 on:input={validateNumber}
+                data-testid="duration-months-input"
             />
         </div>
 
-        <div class="button-group">
+        <div class="button-group" data-testid="calculator-buttons">
             <button 
                 on:click={calculateRates}
                 disabled={!principalAmount || !interestAmount || !durationMonths}
+                data-testid="calculate-button"
             >
                 Calculate
             </button>
-            <button on:click={resetForm} class="reset">Reset</button>
+            <button on:click={resetForm} class="reset" data-testid="reset-button">Reset</button>
         </div>
 
         {#if simpleInterestRate > 0}
-            <div class="results">
-                <div class="result-card">
-                    <h3>Simple Interest Rate</h3>
-                    <p class="percentage">{simpleInterestRate.toFixed(2)}% per annum</p>
-                    <small>Based on simple interest formula: I = P × R × T</small>
+            <div class="results" data-testid="results-section">
+                <div class="result-card" data-testid="simple-interest-card">
+                    <h3 data-testid="simple-interest-title">Simple Interest Rate</h3>
+                    <p class="percentage" data-testid="simple-interest-value">{simpleInterestRate.toFixed(2)}% per annum</p>
+                    <small data-testid="simple-interest-formula">Based on simple interest formula: I = P × R × T</small>
                 </div>
                 
-                <div class="result-card">
-                    <h3>Compound Interest Rate</h3>
-                    <p class="percentage">{compoundInterestRate.toFixed(2)}% per annum</p>
-                    <small>Based on compound interest formula: A = P(1 + R)ᵗ</small>
+                <div class="result-card" data-testid="compound-interest-card">
+                    <h3 data-testid="compound-interest-title">Compound Interest Rate</h3>
+                    <p class="percentage" data-testid="compound-interest-value">{compoundInterestRate.toFixed(2)}% per annum</p>
+                    <small data-testid="compound-interest-formula">Based on compound interest formula: A = P(1 + R)ᵗ</small>
                 </div>
                 
-                <div class="result-card">
-                    <h3>Total Amount</h3>
-                    <p class="amount">₹ {(parseFloat(principalAmount) + parseFloat(interestAmount)).toFixed(2)}</p>
+                <div class="result-card" data-testid="total-amount-card">
+                    <h3 data-testid="total-amount-title">Total Amount</h3>
+                    <p class="amount" data-testid="total-amount-value">₹ {(parseFloat(principalAmount) + parseFloat(interestAmount)).toFixed(2)}</p>
                 </div>
             </div>
         {/if}
