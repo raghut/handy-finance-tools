@@ -1,0 +1,339 @@
+{
+  "emiCalculator": {
+    "validInputs": [
+      {
+        "testCaseId": "TC-EMI-002",
+        "description": "Basic valid case with whole numbers",
+        "input": {
+          "principal": 100000,
+          "rate": 10,
+          "time": 5
+        },
+        "expectedOutput": {
+          "monthlyEMI": 2124.70,
+          "displayText": "Monthly EMI: ₹2124.70"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-008",
+        "description": "EMI calculation with decimal interest rate",
+        "input": {
+          "principal": 500000,
+          "rate": 7.5,
+          "time": 10
+        },
+        "expectedOutput": {
+          "monthlyEMI": 5959.62,
+          "displayText": "Monthly EMI: ₹5959.62"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-010",
+        "description": "EMI with decimal precision",
+        "input": {
+          "principal": 75000,
+          "rate": 8.75,
+          "time": 3
+        },
+        "expectedOutput": {
+          "monthlyEMI": 2375.66,
+          "displayText": "Monthly EMI: ₹2375.66"
+        }
+      }
+    ],
+    "invalidInputs": [
+      {
+        "testCaseId": "TC-EMI-011",
+        "description": "Empty loan amount",
+        "input": {
+          "principal": "",
+          "rate": 10,
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Loan amount is required",
+          "field": "principal"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-012",
+        "description": "Empty interest rate",
+        "input": {
+          "principal": 100000,
+          "rate": "",
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Interest rate is required",
+          "field": "rate"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-013",
+        "description": "Empty loan term",
+        "input": {
+          "principal": 100000,
+          "rate": 10,
+          "time": ""
+        },
+        "expectedError": {
+          "message": "Loan term is required",
+          "field": "time"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-017",
+        "description": "Negative loan amount",
+        "input": {
+          "principal": -50000,
+          "rate": 10,
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Loan amount must be greater than 0",
+          "field": "principal"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-018",
+        "description": "Negative interest rate",
+        "input": {
+          "principal": 100000,
+          "rate": -5,
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Interest rate must be greater than 0",
+          "field": "rate"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-019",
+        "description": "Negative loan term",
+        "input": {
+          "principal": 100000,
+          "rate": 10,
+          "time": -2
+        },
+        "expectedError": {
+          "message": "Loan term must be greater than 0",
+          "field": "time"
+        }
+      }
+    ],
+    "edgeCases": [
+      {
+        "testCaseId": "TC-EMI-020",
+        "description": "Very large loan amount",
+        "input": {
+          "principal": 99999999,
+          "rate": 10,
+          "time": 30
+        },
+        "expectedOutput": {
+          "monthlyEMI": 877056.23,
+          "displayText": "Monthly EMI: ₹877056.23"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-021",
+        "description": "Maximum interest rate (50%)",
+        "input": {
+          "principal": 100000,
+          "rate": 50,
+          "time": 5
+        },
+        "expectedOutput": {
+          "monthlyEMI": 3201.52,
+          "displayText": "Monthly EMI: ₹3201.52"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-022",
+        "description": "Maximum loan term (30 years)",
+        "input": {
+          "principal": 100000,
+          "rate": 10,
+          "time": 30
+        },
+        "expectedOutput": {
+          "monthlyEMI": 877.57,
+          "displayText": "Monthly EMI: ₹877.57"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-025",
+        "description": "Very low interest rate",
+        "input": {
+          "principal": 100000,
+          "rate": 0.1,
+          "time": 5
+        },
+        "expectedOutput": {
+          "monthlyEMI": 1668.35,
+          "displayText": "Monthly EMI: ₹1668.35"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-027",
+        "description": "Zero interest rate",
+        "input": {
+          "principal": 120000,
+          "rate": 0,
+          "time": 2
+        },
+        "expectedOutput": {
+          "monthlyEMI": 5000,
+          "displayText": "Monthly EMI: ₹5000.00"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-020A",
+        "description": "Exceeding maximum loan amount",
+        "input": {
+          "principal": 100000001,
+          "rate": 10,
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Loan amount cannot exceed ₹10 crore",
+          "field": "principal"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-021A",
+        "description": "Exceeding maximum interest rate",
+        "input": {
+          "principal": 100000,
+          "rate": 51,
+          "time": 5
+        },
+        "expectedError": {
+          "message": "Interest rate cannot exceed 50%",
+          "field": "rate"
+        }
+      },
+      {
+        "testCaseId": "TC-EMI-022A",
+        "description": "Exceeding maximum loan term",
+        "input": {
+          "principal": 100000,
+          "rate": 10,
+          "time": 31
+        },
+        "expectedError": {
+          "message": "Loan term cannot exceed 30 years",
+          "field": "time"
+        }
+      }
+    ],
+    "uiUxValidation": {
+      "testCaseId": "TC-EMI-028",
+      "layout": {
+        "inputFields": {
+          "principal": {
+            "label": "Loan Amount (₹)",
+            "id": "principal",
+            "type": "number",
+            "min": "0",
+            "testId": "loan-amount-input"
+          },
+          "rate": {
+            "label": "Interest Rate (% per annum)",
+            "id": "rate",
+            "type": "number",
+            "min": "0",
+            "step": "0.1",
+            "testId": "interest-rate-input"
+          },
+          "time": {
+            "label": "Loan Term (Years)",
+            "id": "time",
+            "type": "number",
+            "min": "0",
+            "testId": "loan-term-input"
+          }
+        },
+        "calculateButton": {
+          "text": "Calculate EMI",
+          "testId": "calculate-emi-button",
+          "backgroundColor": "#1a73e8",
+          "textColor": "#ffffff"
+        },
+        "result": {
+          "testId": "emi-result",
+          "titleTestId": "monthly-emi-value"
+        }
+      }
+    },
+    "accessibilityTests": {
+      "testCaseId": "TC-EMI-035",
+      "elements": {
+        "container": {
+          "testId": "emi-calculator-container"
+        },
+        "title": {
+          "testId": "emi-calculator-title",
+          "text": "EMI Calculator"
+        },
+        "form": {
+          "testId": "emi-calculator-form"
+        },
+        "loanAmountGroup": {
+          "testId": "loan-amount-group",
+          "label": {
+            "testId": "loan-amount-label",
+            "for": "principal"
+          },
+          "error": {
+            "testId": "loan-amount-error"
+          }
+        },
+        "interestRateGroup": {
+          "testId": "interest-rate-group",
+          "label": {
+            "testId": "interest-rate-label",
+            "for": "rate"
+          },
+          "error": {
+            "testId": "interest-rate-error"
+          }
+        },
+        "loanTermGroup": {
+          "testId": "loan-term-group",
+          "label": {
+            "testId": "loan-term-label",
+            "for": "time"
+          },
+          "error": {
+            "testId": "loan-term-error"
+          }
+        }
+      }
+    },
+    "navigationTests": {
+      "testCaseId": "TC-EMI-040",
+      "routes": {
+        "home": "/",
+        "calculator": "/emi-calculator"
+      }
+    },
+    "errorClassifications": {
+      "requiredFields": {
+        "principal": "Loan amount is required",
+        "rate": "Interest rate is required",
+        "time": "Loan term is required"
+      },
+      "negativeValues": {
+        "principal": "Loan amount must be greater than 0",
+        "rate": "Interest rate must be greater than 0",
+        "time": "Loan term must be greater than 0"
+      },
+      "maxLimits": {
+        "principal": "Loan amount cannot exceed ₹10 crore",
+        "rate": "Interest rate cannot exceed 50%",
+        "time": "Loan term cannot exceed 30 years"
+      }
+    }
+  }
+} 
