@@ -1,0 +1,35 @@
+{
+  "interestCalculator": {
+    "validInputs": [
+      {
+        "principal": "1000",
+        "rate": "5",
+        "time": "1",
+        "expectedInterest": "50"
+      },
+      {
+        "principal": "10000",
+        "rate": "7.5",
+        "time": "2",
+        "expectedInterest": "1500"
+      }
+    ],
+    "invalidInputs": [
+      {
+        "principal": "",
+        "rate": "5",
+        "time": "1"
+      },
+      {
+        "principal": "1000",
+        "rate": "",
+        "time": "1"
+      },
+      {
+        "principal": "1000",
+        "rate": "5",
+        "time": ""
+      }
+    ]
+  }
+} 
