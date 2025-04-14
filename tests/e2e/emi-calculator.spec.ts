@@ -3,6 +3,18 @@ import { HomePage } from '../pages/home-page';
 import { EmiCalculatorPage } from '../pages/emi-calculator-page';
 import { emiCalculatorTestData } from '../fixtures/emi-calculator-data';
 
+// Helper function to calculate expected EMI for validation
+function calculateExpectedEmi(principal: number, rate: number, time: number): number {
+  const r = rate / (12 * 100); // Monthly interest rate
+  const n = time * 12; // Total number of months
+  
+  if (r === 0) {
+    return principal / n; // Simple division if rate is 0
+  }
+  
+  return (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
 test.describe('EMI Calculator Tests', () => {
   let homePage: HomePage;
   let emiCalculatorPage: EmiCalculatorPage;
@@ -109,7 +121,7 @@ test.describe('EMI Calculator Tests', () => {
     expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
-  test('[TC-EMI-009][Medium] Resetting the inputs should clear the previously calculated result', async () => {
+  test('[TC-EMI-009][Medium] Resetting the inputs should clear the previously calculated result', async ({ page }) => {
     await emiCalculatorPage.navigate();
     // Calculate EMI first
     await emiCalculatorPage.calculateEmi(
@@ -118,15 +130,26 @@ test.describe('EMI Calculator Tests', () => {
       emiCalculatorTestData.validInputs.loanTerm
     );
     
+    // Verify the result is displayed first
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
     
-    // Reset form
-    await emiCalculatorPage.resetForm();
+    // Reset form - use clear() instead of fill('') for more reliable behavior
+    await page.getByTestId('loan-amount-input').clear();
+    await page.getByTestId('interest-rate-input').clear();
+    await page.getByTestId('loan-term-input').clear();
+    
+    // Click calculate
     await emiCalculatorPage.clickCalculateButton();
     
-    // After reset and calculate, errors should show but no result
-    await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeFalsy();
+    // Verify there's no result but there are error messages
+    const emiResultVisible = await emiCalculatorPage.isEmiResultVisible();
+    expect(emiResultVisible).toBeFalsy();
+    
+    // Error for loan amount should be visible
     await expect(emiCalculatorPage.isLoanAmountErrorVisible()).resolves.toBeTruthy();
+    await expect(emiCalculatorPage.getLoanAmountError()).resolves.toBe(
+      emiCalculatorTestData.expectedErrors.emptyLoanAmount
+    );
   });
 
   // Negative Test Cases
@@ -205,71 +228,218 @@ test.describe('EMI Calculator Tests', () => {
     );
   });
 
-  // Edge Cases
+  // Edge Cases with proper output validation
   test('[TC-EMI-020][Medium] Calculate EMI for very large loan amounts', async () => {
+    const principal = emiCalculatorTestData.edgeCases.veryLargeLoanAmount;
+    const rate = emiCalculatorTestData.validInputs.interestRate;
+    const time = emiCalculatorTestData.validInputs.loanTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.edgeCases.veryLargeLoanAmount,
-      emiCalculatorTestData.validInputs.interestRate,
-      emiCalculatorTestData.validInputs.loanTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
   test('[TC-EMI-021][Medium] Calculate EMI for a very high interest rate', async () => {
+    const principal = emiCalculatorTestData.validInputs.loanAmount;
+    const rate = emiCalculatorTestData.edgeCases.veryHighInterestRate;
+    const time = emiCalculatorTestData.validInputs.loanTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.validInputs.loanAmount,
-      emiCalculatorTestData.edgeCases.veryHighInterestRate,
-      emiCalculatorTestData.validInputs.loanTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
   test('[TC-EMI-022][Medium] Calculate EMI for a very long loan term', async () => {
+    const principal = emiCalculatorTestData.validInputs.loanAmount;
+    const rate = emiCalculatorTestData.validInputs.interestRate;
+    const time = emiCalculatorTestData.edgeCases.veryLongTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.validInputs.loanAmount,
-      emiCalculatorTestData.validInputs.interestRate,
-      emiCalculatorTestData.edgeCases.veryLongTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
   test('[TC-EMI-023][Medium] Calculate EMI for a very short loan term', async () => {
+    const principal = emiCalculatorTestData.validInputs.loanAmount;
+    const rate = emiCalculatorTestData.validInputs.interestRate;
+    const time = emiCalculatorTestData.edgeCases.veryShortTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.validInputs.loanAmount,
-      emiCalculatorTestData.validInputs.interestRate,
-      emiCalculatorTestData.edgeCases.veryShortTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
   test('[TC-EMI-024][Medium] Calculate EMI for a very small loan amount', async () => {
+    const principal = emiCalculatorTestData.edgeCases.verySmallLoanAmount;
+    const rate = emiCalculatorTestData.validInputs.interestRate;
+    const time = emiCalculatorTestData.validInputs.loanTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.edgeCases.verySmallLoanAmount,
-      emiCalculatorTestData.validInputs.interestRate,
-      emiCalculatorTestData.validInputs.loanTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
   });
 
   test('[TC-EMI-025][Medium] Calculate EMI for a very low interest rate', async () => {
+    const principal = emiCalculatorTestData.validInputs.loanAmount;
+    const rate = emiCalculatorTestData.edgeCases.veryLowInterestRate;
+    const time = emiCalculatorTestData.validInputs.loanTerm;
+    
     await emiCalculatorPage.navigate();
-    await emiCalculatorPage.calculateEmi(
-      emiCalculatorTestData.validInputs.loanAmount,
-      emiCalculatorTestData.edgeCases.veryLowInterestRate,
-      emiCalculatorTestData.validInputs.loanTerm
-    );
+    await emiCalculatorPage.calculateEmi(principal, rate, time);
     
     await expect(emiCalculatorPage.isEmiResultVisible()).resolves.toBeTruthy();
+    
+    // Calculate expected EMI value
+    const expectedEmi = calculateExpectedEmi(principal, rate, time);
+    const expectedEmiFormatted = expectedEmi.toFixed(2);
+    
+    // Get actual EMI value from the page
+    const actualEmi = await emiCalculatorPage.getMonthlyEmiValue();
+    const actualEmiNumeric = parseFloat(actualEmi.replace(/,/g, ''));
+    
+    // Compare with a small tolerance for rounding differences
+    expect(Math.abs(actualEmiNumeric - parseFloat(expectedEmiFormatted))).toBeLessThanOrEqual(1);
+  });
+
+  // Better approach for non-numeric input tests
+  test('[TC-EMI-014][Medium] System should not accept non-numeric characters in loan amount field', async ({ page }) => {
+    await emiCalculatorPage.navigate();
+    
+    try {
+      // Try to enter a non-numeric value
+      await emiCalculatorPage.fillLoanAmount(emiCalculatorTestData.invalidInputs.nonNumeric.loanAmount);
+    } catch (error) {
+      // Some browsers/drivers might throw an error when trying to set non-numeric values
+      // This is fine - we expect it to be rejected or ignored
+    }
+    
+    // After trying to enter non-numeric value, the field should either be empty or
+    // the value should have been sanitized to a numeric value (browsers handle this differently)
+    const inputValue = await page.getByTestId('loan-amount-input').inputValue();
+    
+    // Fill other fields with valid values
+    await emiCalculatorPage.fillInterestRate(emiCalculatorTestData.validInputs.interestRate);
+    await emiCalculatorPage.fillLoanTerm(emiCalculatorTestData.validInputs.loanTerm);
+    await emiCalculatorPage.clickCalculateButton();
+    
+    // If the value is empty or not a valid number, we should see error
+    if (!inputValue || isNaN(Number(inputValue)) || Number(inputValue) <= 0) {
+      await expect(emiCalculatorPage.isLoanAmountErrorVisible()).resolves.toBeTruthy();
+    }
+  });
+
+  test('[TC-EMI-015][Medium] System should not accept non-numeric characters in interest rate field', async ({ page }) => {
+    await emiCalculatorPage.navigate();
+    
+    // Fill valid loan amount
+    await emiCalculatorPage.fillLoanAmount(emiCalculatorTestData.validInputs.loanAmount);
+    
+    try {
+      // Try to enter a non-numeric value for interest rate
+      await emiCalculatorPage.fillInterestRate(emiCalculatorTestData.invalidInputs.nonNumeric.interestRate);
+    } catch (error) {
+      // Some browsers/drivers might throw an error when trying to set non-numeric values
+      // This is fine - we expect it to be rejected or ignored
+    }
+    
+    // After trying to enter non-numeric value, the field should either be empty or
+    // the value should have been sanitized to a numeric value
+    const inputValue = await page.getByTestId('interest-rate-input').inputValue();
+    
+    // Fill loan term with valid value
+    await emiCalculatorPage.fillLoanTerm(emiCalculatorTestData.validInputs.loanTerm);
+    await emiCalculatorPage.clickCalculateButton();
+    
+    // If the value is empty or not a valid number, we should see error
+    if (!inputValue || isNaN(Number(inputValue)) || Number(inputValue) <= 0) {
+      await expect(emiCalculatorPage.isInterestRateErrorVisible()).resolves.toBeTruthy();
+    }
+  });
+
+  test('[TC-EMI-016][Medium] System should not accept non-numeric characters in loan term field', async ({ page }) => {
+    await emiCalculatorPage.navigate();
+    
+    // Fill valid loan amount and interest rate
+    await emiCalculatorPage.fillLoanAmount(emiCalculatorTestData.validInputs.loanAmount);
+    await emiCalculatorPage.fillInterestRate(emiCalculatorTestData.validInputs.interestRate);
+    
+    try {
+      // Try to enter a non-numeric value for loan term
+      await emiCalculatorPage.fillLoanTerm(emiCalculatorTestData.invalidInputs.nonNumeric.loanTerm);
+    } catch (error) {
+      // Some browsers/drivers might throw an error when trying to set non-numeric values
+      // This is fine - we expect it to be rejected or ignored
+    }
+    
+    // After trying to enter non-numeric value, the field should either be empty or
+    // the value should have been sanitized to a numeric value
+    const inputValue = await page.getByTestId('loan-term-input').inputValue();
+    await emiCalculatorPage.clickCalculateButton();
+    
+    // If the value is empty or not a valid number, we should see error
+    if (!inputValue || isNaN(Number(inputValue)) || Number(inputValue) <= 0) {
+      await expect(emiCalculatorPage.isLoanTermErrorVisible()).resolves.toBeTruthy();
+    }
   });
 
   // UI/UX Validation
