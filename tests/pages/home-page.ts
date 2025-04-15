@@ -7,6 +7,8 @@ export class HomePage extends BasePage {
   private readonly calculatorGrid = this.page.getByTestId('calculator-grid');
   private readonly emiCalculatorCard = this.page.getByTestId('calculator-card-0');
   private readonly emiCalculatorLink = this.page.getByTestId('calculator-card-0-link');
+  private readonly interestCalculatorCard = this.page.getByTestId('calculator-card-1');
+  private readonly interestCalculatorLink = this.page.getByTestId('calculator-card-1-link');
 
   constructor(page: Page) {
     super(page);
@@ -23,6 +25,11 @@ export class HomePage extends BasePage {
     await this.waitForPageLoad();
   }
 
+  async clickInterestCalculatorLink() {
+    await this.interestCalculatorLink.click();
+    await this.waitForPageLoad();
+  }
+
   // State
   async isCalculatorHubTitleVisible() {
     return this.calculatorHubTitle.isVisible();
@@ -30,6 +37,10 @@ export class HomePage extends BasePage {
 
   async isEmiCalculatorCardVisible() {
     return this.emiCalculatorCard.isVisible();
+  }
+
+  async isInterestCalculatorCardVisible() {
+    return this.interestCalculatorCard.isVisible();
   }
 
   async getCalculatorHubTitle() {
