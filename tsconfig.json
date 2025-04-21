@@ -1,16 +1,22 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
+		"moduleResolution": "NodeNext",
+		"module": "NodeNext",
+		"lib": ["es2020", "DOM"],
+		"target": "es2020",
+		"resolveJsonModule": true,
 		"allowJs": true,
 		"checkJs": true,
+		"isolatedModules": true,
 		"esModuleInterop": true,
+		"verbatimModuleSyntax": false,
 		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "bundler"
-	}
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "tests/**/*.ts"],
+	"exclude": ["node_modules"]
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
 	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
 	//
