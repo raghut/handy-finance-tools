@@ -29,7 +29,13 @@
       title: 'Interest Rate Calculator',
       description: 'Calculate rate of interest',
       icon: 'percentage',
-      route: '/interest-rate-calculator'
+      route: '/interest-rate-calculator',
+    },
+    {
+      title: 'Kaleido Scope',
+      description: 'Kaleido Scope',
+      icon: 'percentage',
+      route: '/kaleido-scope',
     }
   ];
 </script>
