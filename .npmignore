@@ -1,0 +1,49 @@
+# Development and test files
+/tests/
+/test-results/
+/playwright-report/
+/tests-examples/
+/blob-report/
+/playwright/.cache/
+/playwright.config.ts
+
+# Editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Source control
+.git/
+.github/
+.gitlab/
+.gitignore
+
+# Automation setup files
+/automation/
+**/automation/
+**/automation-*
+*-automation
+**/manual-*
+*-manual
+
+# CI/CD Configuration
+.gitlab-ci.yml
+.github/workflows
+.circleci/
+
+# Documentation not needed in production
+/docs/
+*.md
+!README.md
+
+# Node modules (will be reinstalled)
+/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Source maps in production
+*.map 

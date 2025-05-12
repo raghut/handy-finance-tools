@@ -1,7 +1,7 @@
 <script lang="ts">
   export let title: string;
   export let description: string;
-  export let icon: 'calculator' | 'percentage';
+  export let icon: 'calculator' | 'percentage' | 'brush';
   export let route: string;
   export let data_testid: string = '';
 </script>
@@ -16,11 +16,21 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="#1a73e8" data-testid={`${data_testid}-percentage-icon`}>
         <path d="M18.5 3.5L3.5 18.5l2 2L20.5 5.5l-2-2zM7 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm10 10a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
       </svg>
+    {:else if icon === 'brush'}
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="#1a73e8" data-testid={`${data_testid}-brush-icon`}>
+        <path d="M20.71 4.04a1 1 0 0 0-1.41 0L14 9.34l.66.67l5.3-5.3c.39-.4.39-1.03 0-1.42M8 16a3 3 0 1 1 3 3a3 3 0 0 1-3-3m14-12.3L11.6 14.1a4.94 4.94 0 0 0-1.71 1.7a5 5 0 0 0-6.75 6.75l1.42 1.43l1.53-1.53l1.07 1.06l1.4-1.4l-1.06-1.06l1.54-1.53l-1.42-1.43c.35-.56.89-1.1 1.45-1.45a4.94 4.94 0 0 0 1.7-1.7L20.7 3.7a2.1 2.1 0 0 0 0-2.97a2.1 2.1 0 0 0-2.97 0z"/>
+      </svg>
     {/if}
   </div>
   <h2 data-testid={`${data_testid}-title`}>{title}</h2>
   <p data-testid={`${data_testid}-description`}>{description}</p>
-  <a href={route} data-testid={`${data_testid}-link`}>Calculate Now</a>
+  <a href={route} data-testid={`${data_testid}-link`}>
+    {#if icon === 'brush'}
+      Draw Now
+    {:else}
+      Calculate Now
+    {/if}
+  </a>
 </div>
 
 <style>

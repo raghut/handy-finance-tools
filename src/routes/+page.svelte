@@ -4,7 +4,7 @@
   const calculators: {
     title: string;
     description: string;
-    icon: "calculator" | "percentage";
+    icon: "calculator" | "percentage" | "brush";
     route: string;
   }[] = [
     {
@@ -29,7 +29,13 @@
       title: 'Interest Rate Calculator',
       description: 'Calculate rate of interest',
       icon: 'percentage',
-      route: '/interest-rate-calculator'
+      route: '/interest-rate-calculator',
+    },
+    {
+      title: 'Kaleido Scope',
+      description: 'Interactive symmetrical drawing tool',
+      icon: 'brush',
+      route: '/kaleido-scope',
     }
   ];
 </script>
