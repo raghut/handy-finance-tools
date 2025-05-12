@@ -34,139 +34,146 @@
     
     // Use a browser import to avoid SSR issues
     let P5: any;
+    
+    // Check if we're in a browser environment
+    const isBrowser = typeof window !== 'undefined';
 
     // --- Lifecycle Hooks ---
     onMount(async () => {
-      // Add body class for scoped styling
-      document.body.classList.add('kaleidoscope-active');
+      // Add body class for scoped styling - only in browser context
+      if (isBrowser) {
+        document.body.classList.add('kaleidoscope-active');
       
-      // Dynamically import p5 only in the browser
-      const p5Module = await import('p5');
-      P5 = p5Module.default;
-      
-      // The p5.js sketch function
-      const sketch = (p: CustomP5) => {
-        p.setup = () => {
-          // Create the canvas inside the designated container
-          // Use window dimensions directly for initial setup, adjusted for controls
-          let initialCanvasWidth = window.innerWidth;
-          let initialCanvasHeight = window.innerHeight - controlAreaHeight;
-          p.createCanvas(initialCanvasWidth, initialCanvasHeight);
-          p.angleMode(p.DEGREES); // Use degrees for rotation
-          p.background(25);       // Dark background for the drawing area
-        };
-  
-        p.draw = () => {
-          // Use reactive Svelte variables for drawing parameters
-          p.stroke(strokeColor);
-          p.strokeWeight(strokeWeight);
-  
-          // Translate origin to the center for symmetrical drawing
-          p.translate(p.width / 2, p.height / 2);
-  
-          // Draw if mouse is pressed and moved within canvas boundaries
-          if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
-            drawSymmetricalLines(p, p.mouseX, p.mouseY, p.pmouseX, p.pmouseY);
-          }
-        };
+        // Dynamically import p5 only in the browser
+        const p5Module = await import('p5');
+        P5 = p5Module.default;
         
-        // Helper function to draw symmetrical lines
-        function drawSymmetricalLines(p: CustomP5, currentX: number, currentY: number, previousX: number, previousY: number) {
-          // Check for actual movement to avoid dots on static clicks/touches
-          if (p.dist(currentX, currentY, previousX, previousY) > 0.1) { 
-            // Calculate positions relative to the centered origin
-            let mx = currentX - p.width / 2;
-            let my = currentY - p.height / 2;
-            let pmx = previousX - p.width / 2;
-            let pmy = previousY - p.height / 2;
-            
-            let currentAngle = 360 / symmetry; // Calculate angle based on current symmetry
+        // The p5.js sketch function
+        const sketch = (p: CustomP5) => {
+          p.setup = () => {
+            // Create the canvas inside the designated container
+            // Use window dimensions directly for initial setup, adjusted for controls
+            let initialCanvasWidth = window.innerWidth;
+            let initialCanvasHeight = window.innerHeight - controlAreaHeight;
+            p.createCanvas(initialCanvasWidth, initialCanvasHeight);
+            p.angleMode(p.DEGREES); // Use degrees for rotation
+            p.background(25);       // Dark background for the drawing area
+          };
+    
+          p.draw = () => {
+            // Use reactive Svelte variables for drawing parameters
+            p.stroke(strokeColor);
+            p.strokeWeight(strokeWeight);
+    
+            // Translate origin to the center for symmetrical drawing
+            p.translate(p.width / 2, p.height / 2);
+    
+            // Draw if mouse is pressed and moved within canvas boundaries
+            if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+              drawSymmetricalLines(p, p.mouseX, p.mouseY, p.pmouseX, p.pmouseY);
+            }
+          };
+          
+          // Helper function to draw symmetrical lines
+          function drawSymmetricalLines(p: CustomP5, currentX: number, currentY: number, previousX: number, previousY: number) {
+            // Check for actual movement to avoid dots on static clicks/touches
+            if (p.dist(currentX, currentY, previousX, previousY) > 0.1) { 
+              // Calculate positions relative to the centered origin
+              let mx = currentX - p.width / 2;
+              let my = currentY - p.height / 2;
+              let pmx = previousX - p.width / 2;
+              let pmy = previousY - p.height / 2;
+              
+              let currentAngle = 360 / symmetry; // Calculate angle based on current symmetry
 
-            // Loop to draw each symmetrical segment
-            for (let i = 0; i < symmetry; i++) {
-              p.push(); // Save current drawing state
-              p.rotate(i * currentAngle); // Rotate for the current segment
+              // Loop to draw each symmetrical segment
+              for (let i = 0; i < symmetry; i++) {
+                p.push(); // Save current drawing state
+                p.rotate(i * currentAngle); // Rotate for the current segment
 
-              // Draw the primary line
-              p.line(mx, my, pmx, pmy);
+                // Draw the primary line
+                p.line(mx, my, pmx, pmy);
 
-              // Draw the reflected (mirrored) line
-              p.push(); // Save state before scaling for reflection
-              p.scale(1, -1); // Reflect vertically
-              p.line(mx, my, pmx, pmy);
-              p.pop(); // Restore state after reflection
+                // Draw the reflected (mirrored) line
+                p.push(); // Save state before scaling for reflection
+                p.scale(1, -1); // Reflect vertically
+                p.line(mx, my, pmx, pmy);
+                p.pop(); // Restore state after reflection
 
-              p.pop(); // Restore state after rotation
+                p.pop(); // Restore state after rotation
+              }
             }
           }
+          
+          // Touch event handlers
+          p.touchStarted = function() {
+            if (p.touches && p.touches.length > 0) {
+              // Cast p.touches[0] to a TouchPoint to access x and y safely
+              const touch = p.touches[0] as unknown as TouchPoint;
+              if (touch && touch.x > 0 && touch.x < p.width && touch.y > 0 && touch.y < p.height) {
+                prevTouchX = touch.x;
+                prevTouchY = touch.y;
+                isTouching = true;
+              }
+            }
+            return false; // Prevent default
+          };
+          
+          p.touchMoved = function() {
+            if (isTouching && p.touches && p.touches.length > 0) {
+              // Cast p.touches[0] to a TouchPoint to access x and y safely
+              const touch = p.touches[0] as unknown as TouchPoint;
+              if (touch && touch.x > 0 && touch.x < p.width && touch.y > 0 && touch.y < p.height) {
+                // Draw the symmetrical lines for touch movement
+                drawSymmetricalLines(p, touch.x, touch.y, prevTouchX, prevTouchY);
+                // Update previous touch position
+                prevTouchX = touch.x;
+                prevTouchY = touch.y;
+              }
+            }
+            return false; // Prevent default
+          };
+          
+          p.touchEnded = function() {
+            isTouching = false;
+            prevTouchX = 0;
+            prevTouchY = 0;
+            return false; // Prevent default
+          };
+    
+          // p5.js's own window resize handler
+          p.windowResized = () => {
+            let newCanvasWidth = window.innerWidth;
+            let newCanvasHeight = window.innerHeight - controlAreaHeight;
+            p.resizeCanvas(newCanvasWidth, newCanvasHeight);
+            p.background(25); // Clear and redraw background on resize
+          };
+    
+          // Method to clear the canvas, callable from Svelte
+          p.clearDrawingArea = () => {
+            p.background(25);
+          };
+        };
+    
+        // Create the p5 instance, targeting the canvasContainerElement
+        p5Instance = new P5(sketch, canvasContainerElement) as CustomP5;
+    
+        // Initial call to ensure canvas is sized correctly if window is already at final size
+        // This is useful if onMount fires after an initial resize event.
+        if (p5Instance) {
+            let currentCanvasWidth = window.innerWidth;
+            let currentCanvasHeight = window.innerHeight - controlAreaHeight;
+            p5Instance.resizeCanvas(currentCanvasWidth, currentCanvasHeight);
+            p5Instance.background(25);
         }
-        
-        // Touch event handlers
-        p.touchStarted = function() {
-          if (p.touches && p.touches.length > 0) {
-            // Cast p.touches[0] to a TouchPoint to access x and y safely
-            const touch = p.touches[0] as unknown as TouchPoint;
-            if (touch && touch.x > 0 && touch.x < p.width && touch.y > 0 && touch.y < p.height) {
-              prevTouchX = touch.x;
-              prevTouchY = touch.y;
-              isTouching = true;
-            }
-          }
-          return false; // Prevent default
-        };
-        
-        p.touchMoved = function() {
-          if (isTouching && p.touches && p.touches.length > 0) {
-            // Cast p.touches[0] to a TouchPoint to access x and y safely
-            const touch = p.touches[0] as unknown as TouchPoint;
-            if (touch && touch.x > 0 && touch.x < p.width && touch.y > 0 && touch.y < p.height) {
-              // Draw the symmetrical lines for touch movement
-              drawSymmetricalLines(p, touch.x, touch.y, prevTouchX, prevTouchY);
-              // Update previous touch position
-              prevTouchX = touch.x;
-              prevTouchY = touch.y;
-            }
-          }
-          return false; // Prevent default
-        };
-        
-        p.touchEnded = function() {
-          isTouching = false;
-          prevTouchX = 0;
-          prevTouchY = 0;
-          return false; // Prevent default
-        };
-  
-        // p5.js's own window resize handler
-        p.windowResized = () => {
-          let newCanvasWidth = window.innerWidth;
-          let newCanvasHeight = window.innerHeight - controlAreaHeight;
-          p.resizeCanvas(newCanvasWidth, newCanvasHeight);
-          p.background(25); // Clear and redraw background on resize
-        };
-  
-        // Method to clear the canvas, callable from Svelte
-        p.clearDrawingArea = () => {
-          p.background(25);
-        };
-      };
-  
-      // Create the p5 instance, targeting the canvasContainerElement
-      p5Instance = new P5(sketch, canvasContainerElement) as CustomP5;
-  
-      // Initial call to ensure canvas is sized correctly if window is already at final size
-      // This is useful if onMount fires after an initial resize event.
-      if (p5Instance) {
-          let currentCanvasWidth = window.innerWidth;
-          let currentCanvasHeight = window.innerHeight - controlAreaHeight;
-          p5Instance.resizeCanvas(currentCanvasWidth, currentCanvasHeight);
-          p5Instance.background(25);
       }
     });
   
     onDestroy(() => {
-      // Remove body class when component unmounts
-      document.body.classList.remove('kaleidoscope-active');
+      // Remove body class when component unmounts - only in browser context
+      if (isBrowser) {
+        document.body.classList.remove('kaleidoscope-active');
+      }
       
       // Clean up the p5 instance when the Svelte component is destroyed
       if (p5Instance) {

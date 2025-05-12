@@ -4,7 +4,7 @@
   const calculators: {
     title: string;
     description: string;
-    icon: "calculator" | "percentage";
+    icon: "calculator" | "percentage" | "brush";
     route: string;
   }[] = [
     {
@@ -33,8 +33,8 @@
     },
     {
       title: 'Kaleido Scope',
-      description: 'Kaleido Scope',
-      icon: 'percentage',
+      description: 'Interactive symmetrical drawing tool',
+      icon: 'brush',
       route: '/kaleido-scope',
     }
   ];
