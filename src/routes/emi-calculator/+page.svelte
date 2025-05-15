@@ -90,11 +90,11 @@
   }
 </script>
 
-<div class="calculator-container" data-testid="emi-calculator-container">
-  <h1 data-testid="emi-calculator-title">EMI Calculator</h1>
-  <div class="calculator-form" data-testid="emi-calculator-form">
-    <div class="input-group" data-testid="loan-amount-group">
-      <label for="principal" data-testid="loan-amount-label">Loan Amount (₹)</label>
+<div class="calculator-container" data-testid="emi-calculator-container" id="emi-calculator-container">
+  <h1 data-testid="emi-calculator-title" id="emi-calculator-title">EMI Calculator</h1>
+  <div class="calculator-form" data-testid="emi-calculator-form" id="emi-calculator-form">
+    <div class="input-group" data-testid="loan-amount-group" id="loan-amount-group">
+      <label for="principal" data-testid="loan-amount-label" id="loan-amount-label">Loan Amount (₹)</label>
       <input 
         type="number" 
         id="principal" 
@@ -103,14 +103,15 @@
         on:input={() => clearFieldError('principal')}
         class={errors.principal ? 'error-input' : ''}
         data-testid="loan-amount-input"
+        aria-describedby="loan-amount-error"
       >
       {#if errors.principal}
-        <div class="error-message" data-testid="loan-amount-error">{errors.principal}</div>
+        <div class="error-message" data-testid="loan-amount-error" id="loan-amount-error">{errors.principal}</div>
       {/if}
     </div>
     
-    <div class="input-group" data-testid="interest-rate-group">
-      <label for="rate" data-testid="interest-rate-label">Interest Rate (% per annum)</label>
+    <div class="input-group" data-testid="interest-rate-group" id="interest-rate-group">
+      <label for="rate" data-testid="interest-rate-label" id="interest-rate-label">Interest Rate (% per annum)</label>
       <input 
         type="number" 
         id="rate" 
@@ -120,14 +121,15 @@
         on:input={() => clearFieldError('rate')}
         class={errors.rate ? 'error-input' : ''}
         data-testid="interest-rate-input"
+        aria-describedby="interest-rate-error"
       >
       {#if errors.rate}
-        <div class="error-message" data-testid="interest-rate-error">{errors.rate}</div>
+        <div class="error-message" data-testid="interest-rate-error" id="interest-rate-error">{errors.rate}</div>
       {/if}
     </div>
     
-    <div class="input-group" data-testid="loan-term-group">
-      <label for="time" data-testid="loan-term-label">Loan Term (Years)</label>
+    <div class="input-group" data-testid="loan-term-group" id="loan-term-group">
+      <label for="time" data-testid="loan-term-label" id="loan-term-label">Loan Term (Years)</label>
       <input 
         type="number" 
         id="time" 
@@ -136,17 +138,18 @@
         on:input={() => clearFieldError('time')}
         class={errors.time ? 'error-input' : ''}
         data-testid="loan-term-input"
+        aria-describedby="loan-term-error"
       >
       {#if errors.time}
-        <div class="error-message" data-testid="loan-term-error">{errors.time}</div>
+        <div class="error-message" data-testid="loan-term-error" id="loan-term-error">{errors.time}</div>
       {/if}
     </div>
 
-    <button on:click={calculateEMI} data-testid="calculate-emi-button">Calculate EMI</button>
+    <button on:click={calculateEMI} data-testid="calculate-emi-button" id="calculate-emi-button">Calculate EMI</button>
 
     {#if emi}
-      <div class="result" data-testid="emi-result">
-        <h2 data-testid="monthly-emi-value">Monthly EMI: ₹{emi.toFixed(2)}</h2>
+      <div class="result" data-testid="emi-result" id="emi-result">
+        <h2 data-testid="monthly-emi-value" id="monthly-emi-value">Monthly EMI: ₹{emi.toFixed(2)}</h2>
       </div>
     {/if}
   </div>

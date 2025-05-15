@@ -40,14 +40,16 @@
   ];
 </script>
 
-<div class="container" data-testid="calculator-hub-container">
-  <h1 data-testid="calculator-hub-title">Financial Calculator Hub</h1>
-  <div class="calculator-grid" data-testid="calculator-grid">
+<div class="container" data-testid="calculator-hub-container" id="calculator-hub-container">
+  <h1 data-testid="calculator-hub-title" id="calculator-hub-title">Financial Calculator Hub</h1>
+  <div class="calculator-grid" data-testid="calculator-grid" id="calculator-grid">
     {#each calculators as calculator, index}
-      <CalculatorCard 
-        {...calculator} 
-        data_testid={`calculator-card-${index}`}
-      />
+      <div id={`calculator-card-${index}`}>
+        <CalculatorCard 
+          {...calculator} 
+          data_testid={`calculator-card-${index}`}
+        />
+      </div>
     {/each}
   </div>
 </div>
